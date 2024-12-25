@@ -1,0 +1,83 @@
+<MyLayout>
+    canvas:
+        Color:
+            rgba: (235/255, 235/255, 235/255, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    GridLayout:
+        rows: 8
+        
+        padding: 5
+        spacing: 5
+
+        row_force_default: True
+        row_default_height: 50
+        size: root.width, root.height
+
+        Label:
+            size_hint_x: None
+
+        Label:
+            text: "Microphone"
+            color: (0, 0, 0, 1)
+            size_hint_x: None
+            width: 200
+        
+        Switch:
+            id: switch
+            active: True
+            size_hint_x: None
+            width: 200
+        
+        Label:
+            size_hint_y: None
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_x: None
+            size_hint_y: None
+            width: 600
+            height: 100
+
+            Image:
+                source: "assets/mic.png" 
+                size_hint_x: None
+            
+            Slider:
+                id: slider_db
+                min: 0
+                max: 100
+                step: 1
+                value: 50.0
+                disabled: False
+                cursor_size: (0, 0)
+                orientation: "horizontal"
+                value_track: True
+                value_track_color: (0, 1, 0, 1)
+            
+            Label:
+                text: str(slider_db.value) +  " dB"
+                color: (0, 0, 0, 1)
+                size_hint_x: None
+                width: 110
+        
+        Label:
+            size_hint_y: None
+
+        Label:
+            text: "Output"
+            color: (0, 0, 0, 1)
+            size_hint_x: None
+            padding_x: 100
+            width: 150
+        
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: None
+            height: 100
+
+            TextInput:
+                text: "Hello"
+                readonly: True
