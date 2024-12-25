@@ -1,3 +1,3 @@
-# Google Speech-to-Text Demo
+# Google Speech-to-Text API Python Demo with Kivy 
 
-Speech to text API demo using Kivy
+Demo of using the Google Speecht-to-Text API in Python. The GUI is made using Kivy.

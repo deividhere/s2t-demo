@@ -7,7 +7,11 @@ Builder.load_file("design.kv")
 
 
 class MyLayout(Widget):
-    pass
+    def btn_copy_Released(self):
+        print('hey')
+    
+    def btn_clear_Released(self):
+        print('hey')
 
 
 class SPD(App):

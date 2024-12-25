@@ -6,40 +6,44 @@
             pos: self.pos
             size: self.size
 
-    GridLayout:
-        rows: 8
+    BoxLayout:
+        orientation: "vertical"
         
         padding: 5
         spacing: 5
 
-        row_force_default: True
-        row_default_height: 50
         size: root.width, root.height
 
         Label:
-            size_hint_x: None
+            text: "Google Speech-to-Text"
+            color: (0, 0, 0, 1)
+            font_size: 40
+            bold: True
+            size_hint_y: None
+            height: 100
 
         Label:
             text: "Microphone"
             color: (0, 0, 0, 1)
             size_hint_x: None
             width: 200
+            size_hint_y: None
+            height: 50
         
         Switch:
             id: switch
             active: True
             size_hint_x: None
             width: 200
-        
-        Label:
             size_hint_y: None
+            height: 75
 
         BoxLayout:
             orientation: "horizontal"
             size_hint_x: None
-            size_hint_y: None
             width: 600
-            height: 100
+            size_hint_y: None
+            height: 150
 
             Image:
                 source: "assets/mic.png" 
@@ -55,7 +59,7 @@
                 cursor_size: (0, 0)
                 orientation: "horizontal"
                 value_track: True
-                value_track_color: (0, 1, 0, 1)
+                value_track_color: (53/255, 222/255, 53/255, 1)
             
             Label:
                 text: str(slider_db.value) +  " dB"
@@ -63,21 +67,47 @@
                 size_hint_x: None
                 width: 110
         
-        Label:
-            size_hint_y: None
 
         Label:
             text: "Output"
             color: (0, 0, 0, 1)
             size_hint_x: None
-            padding_x: 100
             width: 150
+            size_hint_y: None
+            height: 50
         
         BoxLayout:
             orientation: "horizontal"
-            size_hint_y: None
-            height: 100
+            padding: (25, 0, 25, 25)
+            spacing: 25
 
             TextInput:
                 text: "Hello"
                 readonly: True
+                size_hint: (.9, 1)
+            
+            BoxLayout:
+                orientation: "vertical"
+                size_hint: (.1, 1)
+
+                Button:
+                    id: btn_copy
+                    text: "Copy"
+                    size_hint: (1, .125)
+                    color: (0, 0, 0, 1)
+                    background_normal: ''
+                    background_color: (152/255, 230/255, 101/255, 1)
+                    on_release: root.btn_copy_Released()
+                
+                Label:
+                    size_hint: (1, .75)
+                
+                Button:
+                    id: btn_clear
+                    text: "Clear"
+                    size_hint: (1, .125)
+                    color: (0, 0, 0, 1)
+                    background_normal: ''
+                    background_color: (230/255, 105/255, 101/255, 1)
+                    on_release: root.btn_clear_Released()
+                
