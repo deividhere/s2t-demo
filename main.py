@@ -3,6 +3,8 @@ from kivy.uix.widget import Widget
 from kivy.lang import Builder
 from kivy.core.clipboard import Clipboard
 
+import sounddevice as sd
+import numpy as np
 import threading
 import time
 
@@ -13,6 +15,7 @@ Builder.load_file("design.kv")
 
 class MyLayout(Widget):
     should_update_db = True
+    volume_window_ms = 1000
 
     def __init__(self, **kwargs):
         super(MyLayout, self).__init__(**kwargs)
@@ -25,35 +28,62 @@ class MyLayout(Widget):
         # start the thread
         t.start()
 
+    def current_sound_level(self, indata, outdata, frames, time, status):
+        volume_norm = np.linalg.norm(indata)*10
+        volume_norm = int(volume_norm)
+        
+        slider_db = self.ids["slider_db"]
+
+        # 100dB -> green = 53
+        # 50dB -> green = 222
+        
+        green = 53 + (100 - volume_norm) * (222 - 53)/50
+        if green > 222:
+            green = 222
+
+        # 50dB -> red = 222
+        # 0dB -> red = 53
+
+        red = 53 + volume_norm * (222 - 53)/50
+        if red < 53:
+            red = 53
+        if red > 222:
+            red = 222
+        
+        slider_db.value_track_color = (red/255, green/255, 53/255, 1)
+        slider_db.value = volume_norm
+
     def update_db(self):
         while True:
             if self.should_update_db:
-                slider_db = self.ids["slider_db"]
+                # slider_db = self.ids["slider_db"]
 
-                if slider_db.value < 100:
-                    slider_db.value += 1
+                # if slider_db.value < 100:
+                #     slider_db.value += 1
 
-                    value = slider_db.value
+                #     value = slider_db.value
 
-                    # 100dB -> green = 53
-                    # 50dB -> green = 222
+                #     # 100dB -> green = 53
+                #     # 50dB -> green = 222
                     
-                    green = 53 + (100 - value) * (222 - 53)/50
-                    if green > 222:
-                        green = 222
+                #     green = 53 + (100 - value) * (222 - 53)/50
+                #     if green > 222:
+                #         green = 222
 
-                    # 50dB -> red = 222
-                    # 0dB -> red = 53
+                #     # 50dB -> red = 222
+                #     # 0dB -> red = 53
 
-                    red = 53 + value * (222 - 53)/50
-                    if red < 53:
-                        red = 53
-                    if red > 222:
-                        red = 222
+                #     red = 53 + value * (222 - 53)/50
+                #     if red < 53:
+                #         red = 53
+                #     if red > 222:
+                #         red = 222
                     
-                    slider_db.value_track_color = (red/255, green/255, 53/255, 1)
-                
-            time.sleep(0.1)
+                #     slider_db.value_track_color = (red/255, green/255, 53/255, 1)
+
+                with sd.Stream(callback=self.current_sound_level):
+                    sd.sleep(self.volume_window_ms)
+            
         
 
     def switch_mic_Active(self, switchObject, switchValue):
