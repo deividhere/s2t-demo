@@ -22,22 +22,37 @@
             size_hint_y: None
             height: 100
 
-        Label:
-            text: "Microphone"
-            color: (0, 0, 0, 1)
-            size_hint_x: None
-            width: 200
-            size_hint_y: None
-            height: 50
+        GridLayout:
+            size_hint: (None, None)
+            width: 500
+            height: 200
+
+            rows: 2
+            cols: 2
+            spacing: 10
+            padding: 10
         
-        Switch:
-            id: switch_mic
-            active: True
-            size_hint_x: None
-            width: 200
-            size_hint_y: None
-            height: 75
-            on_active: root.switch_mic_Active(self, self.active)
+            Label:
+                text: "Microphone"
+                color: (0, 0, 0, 1)
+        
+            Label:
+                text: "Language"
+                color: (0, 0, 0, 1)
+        
+            Switch:
+                id: switch_mic
+                active: True
+                on_active: root.switch_mic_Active(self, self.active)
+            
+            BoxLayout:
+                padding: (25, 10, 25, 10)
+
+                Button:
+                    id: btn_language
+                    text: "en-US"
+                    on_release: root.btn_language_Released()
+
 
         BoxLayout:
             orientation: "horizontal"

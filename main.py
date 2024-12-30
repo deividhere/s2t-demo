@@ -4,8 +4,9 @@ from kivy.core.clipboard import Clipboard
 from kivy.lang import Builder
 from kivy.uix.widget import Widget
 
-from google.oauth2 import service_account
 from google.cloud import speech
+from google.cloud.speech_v2.types import cloud_speech
+from google.oauth2 import service_account
 
 import io
 import numpy as np
@@ -27,6 +28,9 @@ class MyLayout(Widget):
     silent_chunks = 0
     is_silent = True
 
+    language_codes = ["en-US", "fr-FR", "ro-RO"]
+    lang_index = 0
+
     # Audio settings
     CHUNK = 1024  # Number of audio frames per buffer
     FORMAT = pyaudio.paInt16
@@ -36,7 +40,7 @@ class MyLayout(Widget):
     SHORT_NORMALIZE = (1.0/32768.0)
     SILENCE_THRESHOLD = 2.5  # Adjust threshold for silence detection
     MAX_SILENCE_CHUNKS = 32  # Number of chunks to consider silence before stopping recording
-    # 8 chunks -> 32 * 0.064s = ~2s
+    # 32 chunks -> 32 * 0.064s = ~2s
     swidth = 2
 
     frames = []
@@ -73,7 +77,6 @@ class MyLayout(Widget):
         rms = np.pow(sum_squares / count, 0.5)
 
         return rms * 1000
-
 
     def record_chunk(self):
         while True:
@@ -146,7 +149,8 @@ class MyLayout(Widget):
                     self.frames.clear()
 
     @mainthread
-    def update_textbox(self, new_text): # this will run in mainthread, even if called  outside.
+    def update_textbox(self, new_text):
+        # this will run in mainthread, even if called  outside.
         tb_input = self.ids["tb_input"]
         tb_input.text += new_text + "\n"
 
@@ -154,12 +158,12 @@ class MyLayout(Widget):
         """Transcribes audio from a file using Google Cloud Speech-to-Text API."""
         with io.open(filename, 'rb') as audio_file:
             content = audio_file.read()
-        
+
         audio = speech.RecognitionAudio(content=content)
         config = speech.RecognitionConfig(
             encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
             sample_rate_hertz=self.RATE,
-            language_code="en-US",
+            language_code=self.language_codes[self.lang_index],
         )
 
         response = self.client.recognize(config=config, audio=audio)
@@ -170,7 +174,6 @@ class MyLayout(Widget):
             if len(new_text) > 0:
                 self.update_textbox(new_text)
                 
-        
     def update_db(self, new_value):
         slider_db = self.ids["slider_db"]
 
@@ -209,6 +212,16 @@ class MyLayout(Widget):
     def btn_clear_Released(self):
         tb_input = self.ids["tb_input"]
         tb_input.text = ""
+    
+    def btn_language_Released(self):
+        btn_language = self.ids["btn_language"]
+
+        self.lang_index += 1
+
+        if self.lang_index >= len(self.language_codes):
+            self.lang_index = 0
+
+        btn_language.text = self.language_codes[self.lang_index]
 
 
 class SPD(App):
