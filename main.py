@@ -23,10 +23,10 @@ Builder.load_file("design.kv")
 
 
 class MyLayout(Widget):
-    should_record = True
-    recording_on = False
-    silent_chunks = 0
-    is_silent = True
+    should_record = True # modified by the user clicking on the microphone toggle
+    recording_on = False # is the stream open?
+    silent_chunks = 0 # number of chunks of silence, reset every time there's some audio activity
+    is_silent = True # if all the chunks in the recording are silent, there's no point in sending the file to the API
 
     language_codes = ["en-US", "fr-FR", "ro-RO"]
     lang_index = 0
@@ -35,14 +35,14 @@ class MyLayout(Widget):
     CHUNK = 1024  # Number of audio frames per buffer
     FORMAT = pyaudio.paInt16
     CHANNELS = 1
-    DEVICE = 1
-    RATE = 16000
+    DEVICE = 1 # TODO: set your audio device here
+    RATE = 16000 # sampling rate
     SHORT_NORMALIZE = (1.0/32768.0)
     SILENCE_THRESHOLD = 2.5  # Adjust threshold for silence detection
-    MAX_SILENCE_CHUNKS = 32  # Number of chunks to consider silence before stopping recording
-    # 32 chunks -> 32 * 0.064s = ~2s
+    MAX_SILENCE_CHUNKS = 32  # Number of chunks to consider silence before stopping recording - 32 chunks -> 32 * 0.064s = ~2s
     swidth = 2
 
+    # audio recording
     frames = []
 
     def __init__(self, **kwargs):
